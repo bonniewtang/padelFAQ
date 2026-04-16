@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PadelRef AI | Master the Rules</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+        .padel-green { color: #ccff00; }
+        .bg-padel-green { background-color: #ccff00; }
+    </style>
+</head>
+<body class="gradient-bg text-white font-sans min-h-screen">
+
+    <header class="container mx-auto px-6 py-12 text-center">
+        <h1 class="text-5xl md:text-7xl font-extrabold mb-4">Padel<span class="padel-green">Ref</span> AI</h1>
+        <p class="text-xl text-slate-300 mb-8">The world's first AI voice agent for court-side rule disputes.</p>
+        
+        <div class="flex justify-center gap-4">
+            <a href="#game" class="bg-padel-green text-black px-8 py-3 rounded-full font-bold hover:scale-105 transition">Play the Quiz</a>
+            <button onclick="toggleVoice()" class="glass px-8 py-3 rounded-full font-bold hover:bg-white/10 transition">Try Voice Demo</button>
+        </div>
+    </header>
+
+    <section id="game" class="container mx-auto px-6 py-12">
+        <div class="max-w-2xl mx-auto glass rounded-3xl p-8 shadow-2xl">
+            <div id="game-container">
+                <div class="flex justify-between items-center mb-6">
+                    <span class="text-sm uppercase tracking-widest text-slate-400">Rule or No Rule?</span>
+                    <span id="score" class="padel-green font-bold">Score: 0</span>
+                </div>
+                
+                <div id="question-box" class="mb-8">
+                    <h2 id="question-text" class="text-2xl font-semibold mb-4 italic">"The ball hits the fence directly after the serve. Is it a fault?"</h2>
+                    <div id="feedback" class="hidden p-4 rounded-lg mb-4 text-center font-bold"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="checkAnswer(true)" class="bg-green-600 hover:bg-green-500 p-4 rounded-xl font-bold transition">VALID POINT</button>
+                    <button onclick="checkAnswer(false)" class="bg-red-600 hover:bg-red-500 p-4 rounded-xl font-bold transition">FAULT / OUT</button>
+                </div>
+            </div>
+
+            <div id="lead-capture" class="hidden text-center animate-fade-in">
+                <h2 class="text-3xl font-bold mb-4">You're a Padel Pro! 🎾</h2>
+                <p class="text-slate-300 mb-6">Get our "Hidden Rules" PDF and early access to the Voice Agent.</p>
+                <form onsubmit="handleLead(event)" class="space-y-4">
+                    <input type="email" required placeholder="Enter your email" class="w-full p-4 rounded-xl bg-slate-800 border border-slate-700 focus:outline-none focus:border-padel-green">
+                    <button type="submit" class="w-full bg-padel-green text-black p-4 rounded-xl font-bold uppercase tracking-widest">Get Early Access</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <div id="voice-overlay" class="fixed inset-0 bg-black/90 hidden flex-col items-center justify-center z-50">
+        <div class="relative">
+            <div class="w-32 h-32 bg-padel-green rounded-full animate-ping opacity-20 absolute inset-0"></div>
+            <div class="w-32 h-32 bg-padel-green rounded-full flex items-center justify-center relative">
+                <i class="fa-solid fa-microphone text-4xl text-black"></i>
+            </div>
+        </div>
+        <p class="mt-8 text-2xl font-light">"Ask me a rule..."</p>
+        <p id="voice-transcript" class="mt-4 text-slate-400 italic">Listening for: "Can I hit the ball out of court?"</p>
+        <button onclick="toggleVoice()" class="mt-12 text-slate-500 underline">Close Demo</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+const questions = [
+    { text: "The ball bounces twice in the opponent's side. Is the point over?", answer: true, reason: "Correct! Two bounces always ends the point." },
+    { text: "The ball hits the net and then the fence on a serve.", answer: false, reason: "Let! But hitting the fence directly after the net on a serve is a fault." },
+    { text: "You hit the ball, it hits the opponent's glass, then bounces back over the net. Do you win the point?", answer: true, reason: "Yes! If the opponent doesn't touch it, it's your point." },
+    { text: "Your racket touches the net while you are smashing. Is that okay?", answer: false, reason: "Fault! Any contact with the net during play loses you the point." }
+];
+
+let currentIdx = 0;
+let score = 0;
+
+function checkAnswer(userChoice) {
+    const feedbackEl = document.getElementById('feedback');
+    const q = questions[currentIdx];
+
+    if (userChoice === q.answer) {
+        score++;
+        feedbackEl.textContent = "✅ " + q.reason;
+        feedbackEl.className = "p-4 rounded-lg mb-4 text-center font-bold bg-green-900/50 text-green-400";
+    } else {
+        feedbackEl.textContent = "❌ " + q.reason;
+        feedbackEl.className = "p-4 rounded-lg mb-4 text-center font-bold bg-red-900/50 text-red-400";
+    }
+
+    feedbackEl.classList.remove('hidden');
+    document.getElementById('score').textContent = `Score: ${score}`;
+
+    setTimeout(() => {
+        feedbackEl.classList.add('hidden');
+        currentIdx++;
+        if (currentIdx < questions.length) {
+            document.getElementById('question-text').textContent = `"${questions[currentIdx].text}"`;
+        } else {
+            showLeadCapture();
+        }
+    }, 2500);
+}
+
+function showLeadCapture() {
+    document.getElementById('game-container').classList.add('hidden');
+    document.getElementById('lead-capture').classList.remove('hidden');
+}
+
+function handleLead(e) {
+    e.preventDefault();
+    alert("Welcome to the team! Your rulebook is on the way.");
+    // Here you would typically use fetch() to send the email to your backend/CRM
+}
+
+function toggleVoice() {
+    const overlay = document.getElementById('voice-overlay');
+    overlay.classList.toggle('hidden');
+    
+    // Simple UI mock for the voice interaction
+    if (!overlay.classList.contains('hidden')) {
+        setTimeout(() => {
+            document.getElementById('voice-transcript').textContent = "Processing: 'Is it legal to play outside the court?'";
+        }, 2000);
+        setTimeout(() => {
+            document.getElementById('voice-transcript').textContent = "PadelRef: 'Yes, if the court is approved for out-of-court play!'";
+        }, 4000);
+    }
+}
