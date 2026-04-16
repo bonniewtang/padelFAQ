@@ -949,9 +949,9 @@
               <div class="agent-header__avatar" aria-hidden="true">🎾</div>
               <div>
                 <div class="agent-header__name">Padel Pete</div>
-                <div class="agent-header__status">
+                <div class="agent-header__status" id="agent-status">
                   <span class="pulse" aria-hidden="true"></span>
-                  Online · Answering rules questions
+                  <span id="agent-status-text">Ready — tap Start to talk</span>
                 </div>
               </div>
             </div>
@@ -959,22 +959,22 @@
           </div>
 
           <!-- Quick chips -->
-          <div class="chips" role="list" aria-label="Sample questions">
-            <button class="chip" role="listitem" onclick="askAgent('How many serves do you get per point?')">Serve rules</button>
-            <button class="chip" role="listitem" onclick="askAgent('Can the ball bounce off the glass wall?')">Wall & glass</button>
-            <button class="chip" role="listitem" onclick="askAgent('What is a let in padel?')">What is a let?</button>
-            <button class="chip" role="listitem" onclick="askAgent('How does padel scoring work?')">Scoring</button>
-            <button class="chip" role="listitem" onclick="askAgent('What are the court dimensions?')">Court size</button>
-            <button class="chip" role="listitem" onclick="askAgent('When is a serve a fault?')">Service fault</button>
+          <div class="chips" role="list" aria-label="Sample questions — tap one to send">
+            <button class="chip" role="listitem" onclick="sendChip('How many serves do you get per point?')">Serve rules</button>
+            <button class="chip" role="listitem" onclick="sendChip('Can the ball bounce off the glass wall?')">Wall &amp; glass</button>
+            <button class="chip" role="listitem" onclick="sendChip('What is a let in padel?')">What is a let?</button>
+            <button class="chip" role="listitem" onclick="sendChip('How does padel scoring work?')">Scoring</button>
+            <button class="chip" role="listitem" onclick="sendChip('What are the court dimensions?')">Court size</button>
+            <button class="chip" role="listitem" onclick="sendChip('When is a serve a fault?')">Service fault</button>
           </div>
 
-          <!-- Chat window -->
-          <div class="chat-window" id="chat-window" role="log" aria-live="polite" aria-label="Conversation">
-            <div class="msg msg--bot">
+          <!-- Transcript window — populated by ElevenLabs SDK events -->
+          <div class="chat-window" id="chat-window" role="log" aria-live="polite" aria-label="Conversation transcript">
+            <div class="msg msg--bot" id="welcome-msg">
               <div class="msg__avatar" aria-hidden="true">🎾</div>
               <div>
                 <div class="msg__bubble">
-                  Hi! I'm Padel Pete, your official padel rules referee. Ask me any rules question — service rules, wall bounces, scoring, equipment — I've got the FIP rulebook memorised.
+                  Hi! I'm Padel Pete, your official padel rules referee. Press <strong>Start conversation</strong> below to talk to me, or type a question and hit Send.
                 </div>
               </div>
             </div>
@@ -987,7 +987,7 @@
             <div class="typing-dot"></div>
           </div>
 
-          <!-- Email gate (shown after 3 queries) -->
+          <!-- Email gate (shown after 3 voice turns) -->
           <div class="email-gate" id="email-gate" role="complementary" aria-label="Get the full rules guide">
             <div class="email-gate__text">
               <strong>📖 Want the full rules guide?</strong>
@@ -999,29 +999,39 @@
             </form>
           </div>
 
-          <!-- Input row -->
+          <!-- Controls row -->
           <div class="agent-footer">
-            <button class="mic-btn" id="mic-btn" aria-label="Toggle voice input" aria-pressed="false">
-              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Voice: Start / Stop call -->
+            <button class="mic-btn" id="mic-btn" aria-label="Start voice conversation" aria-pressed="false">
+              <svg id="mic-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
                 <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
                 <line x1="12" y1="19" x2="12" y2="23"/>
                 <line x1="8" y1="23" x2="16" y2="23"/>
               </svg>
             </button>
+            <!-- Text fallback input -->
             <input
               type="text"
               class="text-input"
               id="chat-input"
-              placeholder="Type a rules question..."
+              placeholder="Or type a question and press Send…"
               aria-label="Type your rules question"
               autocomplete="off"
               maxlength="300"
             />
-            <button class="send-btn" id="send-btn" aria-label="Send question">Send →</button>
+            <button class="send-btn" id="send-btn" aria-label="Send text question">Send →</button>
           </div>
+
+          <!-- Status bar beneath controls -->
+          <div id="call-status-bar" style="display:none; padding:10px 20px; font-size:12px; color:var(--green-600); background:var(--green-50); border-top:1px solid var(--border); align-items:center; gap:8px;">
+            <span class="pulse" style="background:var(--green-500);" aria-hidden="true"></span>
+            <span id="call-status-text">Connecting…</span>
+            <button onclick="stopConversation()" style="margin-left:auto;font-size:12px;color:#e53e3e;background:none;border:none;cursor:pointer;font-family:inherit;">End call</button>
+          </div>
+
           <p class="agent-disclaimer">
-            Padel Pete is powered by AI and references official FIP rules. For official tournament disputes, consult a certified referee.
+            Padel Pete is powered by ElevenLabs AI and references official FIP rules. Microphone access is required for voice mode. For official tournament disputes, consult a certified referee.
           </p>
         </div>
       </div>
@@ -1378,180 +1388,207 @@
     }
 
     /* ─────────────────────────────────────────
-       VOICE AGENT
+       ELEVENLABS CONVERSATIONAL AI INTEGRATION
+       Agent ID: agent_7801kpbsccq2fdt9kpswrk94kqxf
     ───────────────────────────────────────── */
-    const RULES_KB = {
-      serve: {
-        keywords: ['serv', 'serve', 'service', 'fault', 'let'],
-        answer: 'Each player gets <strong>one service attempt per point</strong>. The server must stand behind the service line on the correct side. If the serve clips the net and lands in the correct service box, a <em>let</em> is called and the serve is replayed — no fault awarded. A serve that lands outside the box or fails to cross the net is a <strong>fault</strong> and the point is lost immediately.',
-        ref: 'FIP Rule 14 · Service'
-      },
-      wall: {
-        keywords: ['glass', 'wall', 'bounce', 'mesh', 'wire', 'fenc'],
-        answer: 'After the ball bounces <strong>once on your side of the court</strong>, it may hit the glass walls or wire mesh fence and still be in play — you can return it. You must return the ball before it <strong>bounces a second time on the ground</strong>. If the ball hits the wire before bouncing on the ground, the rally continues. If it goes over the fence out of the enclosure, the point is lost.',
-        ref: 'FIP Rule 18 · Ball in Play'
-      },
-      scoring: {
-        keywords: ['scor', 'point', 'game', 'set', 'match', 'deuce', '40', 'tiebreak', 'golden'],
-        answer: 'Padel uses standard tennis scoring: <strong>15 · 30 · 40 · Game</strong>. Matches are best of 3 sets; each set is first to 6 games (must win by 2). A tiebreak is played at 6–6 in sets 1 and 2. Many formats use a <strong>golden point at deuce</strong> (sudden death) — the receiver chooses which side to receive from.',
-        ref: 'FIP Rule 26 · Scoring'
-      },
-      let: {
-        keywords: ['let', 'replay', 'interrupt', 'disturbance'],
-        answer: 'A <strong>let</strong> is called when play must be replayed without penalty. Common causes: (1) the serve clips the net and lands correctly in the service box; (2) an external disturbance interrupts play (ball from another court, spectator intrusion); (3) players are not ready. When a let is called, the entire point — including the serve — is replayed.',
-        ref: 'FIP Rule 22 · Let'
-      },
-      court: {
-        keywords: ['court', 'dimension', 'size', 'width', 'length', 'metre', 'meter', 'big'],
-        answer: 'A regulation padel court is <strong>20 metres long × 10 metres wide</strong>, fully enclosed by glass walls and wire mesh fencing. The net is 88 cm high at the posts and 92 cm high at the centre. The service boxes are 6.95 metres long each side. The court must be made of artificial grass, concrete, or a suitable sports surface.',
-        ref: 'FIP Court Specifications · Annex 1'
-      },
-      equipment: {
-        keywords: ['racket', 'bat', 'padel', 'equip', 'ball', 'weight', 'hole', 'string'],
-        answer: 'A padel racket must have a <strong>maximum length of 45.5 cm</strong>, maximum width 26 cm, and maximum thickness 38 mm. It must not have strings — the hitting surface is solid with holes. Official padel balls must weigh between <strong>56–59.4 grams</strong> and have a diameter of 6.35–6.77 cm.',
-        ref: 'FIP Rule 2 · Equipment'
-      },
-      position: {
-        keywords: ['position', 'switch', 'side', 'cross', 'partner', 'net', 'touch'],
-        answer: 'Players can <strong>switch sides with their partner</strong> at any time during a rally — there are no restrictions on movement within your own court. However, you may not touch the net, reach into the opponents\' half, or lean over the net to play the ball. Touching the net with body or racket during play loses the point.',
-        ref: 'FIP Rule 20 · Conduct of Play'
-      },
-    };
+    const AGENT_ID = 'agent_7801kpbsccq2fdt9kpswrk94kqxf';
 
-    const FALLBACK = {
-      answer: 'Great question! That\'s a nuanced padel rules situation. Based on general FIP principles, play is governed by the spirit of fair competition and the specific rules for ball-in-play scenarios. I\'d recommend checking <strong>FIP Rules 14–26</strong> for the most relevant section. Would you like me to look up something more specific?',
-      ref: 'FIP Official Rulebook · fip-padel.com'
-    };
+    let conversation = null;   // ElevenLabs Conversation instance
+    let callActive   = false;
+    let voiceTurnCount = 0;
+    const MAX_FREE_TURNS = 3;
 
-    function findAnswer(query) {
-      const q = query.toLowerCase();
-      for (const key of Object.keys(RULES_KB)) {
-        const kb = RULES_KB[key];
-        if (kb.keywords.some(kw => q.includes(kw))) return kb;
-      }
-      return FALLBACK;
-    }
+    /* ── DOM refs ── */
+    const micBtn        = document.getElementById('mic-btn');
+    const chatWindow    = document.getElementById('chat-window');
+    const typingEl      = document.getElementById('typing');
+    const statusBar     = document.getElementById('call-status-bar');
+    const statusText    = document.getElementById('call-status-text');
+    const agentStatusTxt = document.getElementById('agent-status-text');
 
-    let queryCount = 0;
-    const MAX_FREE_QUERIES = 3;
-
-    function appendMsg(html, ref, isUser = false) {
-      const win = document.getElementById('chat-window');
+    /* ── Helpers ── */
+    function appendMsg(text, isUser = false) {
       const div = document.createElement('div');
       div.className = `msg msg--${isUser ? 'user' : 'bot'}`;
-      if (isUser) {
-        div.innerHTML = `<div class="msg__bubble">${html}</div>`;
-      } else {
-        div.innerHTML = `
-          <div class="msg__avatar" aria-hidden="true">🎾</div>
-          <div>
-            <div class="msg__bubble">${html}</div>
-            ${ref ? `<div class="msg__ref"><svg aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>${ref}</div>` : ''}
-          </div>`;
+      div.innerHTML = isUser
+        ? `<div class="msg__bubble">${escHtml(text)}</div>`
+        : `<div class="msg__avatar" aria-hidden="true">🎾</div>
+           <div><div class="msg__bubble">${escHtml(text)}</div></div>`;
+      chatWindow.appendChild(div);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    function escHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function setTyping(on) {
+      typingEl.classList.toggle('visible', on);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    function setMicState(active) {
+      callActive = active;
+      micBtn.classList.toggle('listening', active);
+      micBtn.setAttribute('aria-pressed', active);
+      micBtn.setAttribute('aria-label', active ? 'End voice conversation' : 'Start voice conversation');
+      statusBar.style.display = active ? 'flex' : 'none';
+      if (active) statusBar.style.alignItems = 'center';
+      agentStatusTxt.textContent = active ? 'Live — speak your question' : 'Ready — tap Start to talk';
+    }
+
+    function checkEmailGate() {
+      voiceTurnCount++;
+      if (voiceTurnCount >= MAX_FREE_TURNS) {
+        document.getElementById('email-gate').classList.add('show');
       }
-      win.appendChild(div);
-      win.scrollTop = win.scrollHeight;
-      return div;
     }
 
-    function setTyping(visible) {
-      const t = document.getElementById('typing');
-      t.classList.toggle('visible', visible);
-      const win = document.getElementById('chat-window');
-      win.scrollTop = win.scrollHeight;
+    /* ── Start ElevenLabs voice conversation ── */
+    async function startConversation() {
+      if (callActive) return;
+
+      /* Request microphone permission explicitly so we can show a friendly error */
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (err) {
+        showToast('🎙️ Mic access denied. Please allow microphone and try again.');
+        return;
+      }
+
+      statusText.textContent = 'Connecting to Padel Pete…';
+      setMicState(true);
+
+      try {
+        /* ElevenLabs Conversational AI SDK — loaded via CDN below */
+        conversation = await ElevenLabsClient.Conversation.startSession({
+          agentId: AGENT_ID,
+
+          /* ── Lifecycle callbacks ── */
+          onConnect: () => {
+            statusText.textContent = 'Connected — speak now';
+            showToast('🎾 Padel Pete connected!');
+          },
+
+          onDisconnect: () => {
+            setMicState(false);
+            statusText.textContent = 'Call ended';
+            conversation = null;
+          },
+
+          onError: (msg) => {
+            console.error('ElevenLabs error:', msg);
+            setMicState(false);
+            showToast('⚠️ Connection error — please try again.');
+            conversation = null;
+          },
+
+          /* ── Transcript callbacks — build the chat log ── */
+          onMessage: ({ message, source }) => {
+            setTyping(false);
+            if (source === 'user') {
+              appendMsg(message, true);
+              setTyping(true);   // agent is thinking
+            } else if (source === 'ai') {
+              setTyping(false);
+              appendMsg(message, false);
+              checkEmailGate();
+            }
+          },
+
+          /* ── Agent speaking status ── */
+          onModeChange: ({ mode }) => {
+            if (mode === 'speaking') {
+              statusText.textContent = 'Pete is speaking…';
+              setTyping(false);
+            } else if (mode === 'listening') {
+              statusText.textContent = 'Listening — speak now';
+            } else {
+              statusText.textContent = 'Processing…';
+            }
+          },
+        });
+
+      } catch (err) {
+        console.error('Failed to start session:', err);
+        setMicState(false);
+        showToast('⚠️ Could not connect to Padel Pete. Check your connection and try again.');
+      }
     }
 
-    window.askAgent = function(question) {
-      const input = document.getElementById('chat-input');
-      input.value = question;
-      sendMessage();
+    /* ── Stop voice conversation ── */
+    window.stopConversation = async function() {
+      if (conversation) {
+        await conversation.endSession();
+        conversation = null;
+      }
+      setMicState(false);
     };
 
-    function sendMessage() {
+    /* ── Mic button toggles voice call ── */
+    micBtn.addEventListener('click', () => {
+      if (callActive) {
+        stopConversation();
+      } else {
+        startConversation();
+      }
+    });
+
+    /* ── Text fallback: send typed question via a short voice call ── */
+    function sendTextMessage() {
       const input = document.getElementById('chat-input');
       const q = input.value.trim();
       if (!q) return;
-
       input.value = '';
-      appendMsg(q, null, true);
+
+      /* Show the user's message in the transcript immediately */
+      appendMsg(q, true);
       setTyping(true);
+      checkEmailGate();
 
-      queryCount++;
-
-      // Show email gate after max free queries
-      if (queryCount >= MAX_FREE_QUERIES) {
-        document.getElementById('email-gate').classList.add('show');
+      /*
+        NOTE: ElevenLabs Conversational AI is a real-time voice-only protocol.
+        Text injection mid-session is supported in the SDK via conversation.sendUserInput()
+        when a session is already active. If no session is active we start one, send
+        the text, and let Pete respond by voice + transcript.
+      */
+      if (conversation && callActive) {
+        try {
+          conversation.sendUserInput(q);
+        } catch (e) {
+          console.warn('sendUserInput failed:', e);
+          setTyping(false);
+          appendMsg('Sorry, there was a problem sending your message. Please try voice mode.', false);
+        }
+      } else {
+        /* No active session — show a friendly nudge to use voice or start a session */
+        setTimeout(() => {
+          setTyping(false);
+          appendMsg('👆 Tap the green mic button to start a voice session with Padel Pete, then ask your question out loud! Or press Start below.', false);
+        }, 600);
       }
-
-      const delay = 700 + Math.random() * 600;
-      setTimeout(() => {
-        setTyping(false);
-        const result = findAnswer(q);
-        appendMsg(result.answer, result.ref);
-      }, delay);
     }
 
-    document.getElementById('send-btn').addEventListener('click', sendMessage);
+    document.getElementById('send-btn').addEventListener('click', sendTextMessage);
     document.getElementById('chat-input').addEventListener('keydown', e => {
-      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendTextMessage(); }
     });
 
-    /* Microphone (Web Speech API) */
-    const micBtn = document.getElementById('mic-btn');
-    let recognition = null;
-    let isListening = false;
+    /* ── Quick chip questions ── */
+    window.sendChip = function(question) {
+      document.getElementById('chat-input').value = question;
+      sendTextMessage();
+    };
 
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognition = new SR();
-      recognition.lang = 'en-US';
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-
-      recognition.addEventListener('result', e => {
-        const transcript = e.results[0][0].transcript;
-        document.getElementById('chat-input').value = transcript;
-        sendMessage();
-      });
-
-      recognition.addEventListener('end', () => {
-        isListening = false;
-        micBtn.classList.remove('listening');
-        micBtn.setAttribute('aria-pressed', 'false');
-        micBtn.setAttribute('aria-label', 'Toggle voice input');
-      });
-
-      recognition.addEventListener('error', e => {
-        isListening = false;
-        micBtn.classList.remove('listening');
-        if (e.error === 'not-allowed') {
-          showToast('🎙️ Microphone access denied. Please allow mic access and try again.');
-        }
-      });
-
-      micBtn.addEventListener('click', () => {
-        if (isListening) {
-          recognition.stop();
-        } else {
-          recognition.start();
-          isListening = true;
-          micBtn.classList.add('listening');
-          micBtn.setAttribute('aria-pressed', 'true');
-          micBtn.setAttribute('aria-label', 'Stop listening');
-        }
-      });
-    } else {
-      micBtn.setAttribute('title', 'Voice input not supported in this browser');
-      micBtn.style.opacity = '0.45';
-      micBtn.addEventListener('click', () => showToast('🎙️ Voice input requires Chrome or Edge.'));
-    }
-
-    /* Email gate form */
+    /* ── Email gate form ── */
     document.getElementById('gate-form').addEventListener('submit', e => {
       e.preventDefault();
       const email = document.getElementById('gate-email').value.trim();
       if (!email || !email.includes('@')) { showToast('Please enter a valid email address.'); return; }
-      document.getElementById('email-gate').innerHTML = `<div style="padding:12px 20px;font-size:13px;color:var(--green-700);">✅ Handbook sent to <strong>${email}</strong> — check your inbox!</div>`;
+      document.getElementById('email-gate').innerHTML =
+        `<div style="padding:12px 20px;font-size:13px;color:var(--green-700);">
+           ✅ Handbook sent to <strong>${escHtml(email)}</strong> — check your inbox!
+         </div>`;
       showToast('📖 Handbook on its way!');
     });
 
@@ -1808,6 +1845,13 @@
 
   })();
   </script>
+
+  <!--
+    ElevenLabs Conversational AI SDK
+    Loaded last so it doesn't block page render.
+    The UMD build exposes window.ElevenLabsClient globally.
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/@11labs/client@latest/dist/index.umd.js"></script>
 
 </body>
 </html>
