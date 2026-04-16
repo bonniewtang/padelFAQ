@@ -1,134 +1,1813 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PadelRef AI | Master the Rules</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
-        .padel-green { color: #ccff00; }
-        .bg-padel-green { background-color: #ccff00; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="PadelIQ — Ask any padel rules question in plain English. Get the exact FIP rule in seconds from our AI referee, Padel Pete." />
+  <meta property="og:title" content="PadelIQ · AI Padel Rules Referee" />
+  <meta property="og:description" content="Never argue about a padel rule again. Ask our voice AI and get the official answer instantly." />
+  <meta property="og:type" content="website" />
+  <title>PadelIQ · AI Padel Rules Referee</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ═══════════════════════════════════════════
+       DESIGN TOKENS
+    ═══════════════════════════════════════════ */
+    :root {
+      --green-900: #0d1f18;
+      --green-800: #1a3c2e;
+      --green-700: #22503d;
+      --green-600: #2e6b4f;
+      --green-500: #3d8b68;
+      --green-400: #55ac84;
+      --green-100: #c8eedd;
+      --green-50:  #edf8f2;
+
+      --yellow:    #f5c842;
+      --yellow-dk: #c9a02d;
+      --yellow-lt: #fdf3cc;
+
+      --surface:   #f5faf7;
+      --white:     #ffffff;
+      --text:      #111918;
+      --muted:     #4a5e56;
+      --subtle:    #8ea89f;
+      --border:    rgba(26,60,46,.12);
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+
+      --shadow-sm: 0 1px 4px rgba(0,0,0,.07);
+      --shadow-md: 0 4px 16px rgba(0,0,0,.09);
+      --shadow-lg: 0 12px 48px rgba(0,0,0,.13);
+
+      --font-display: 'Syne', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+
+      --nav-h: 68px;
+      --max-w: 1100px;
+      --section-py: 96px;
+    }
+
+    /* ═══════════════════════════════════════════
+       RESET & BASE
+    ═══════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+    img, video { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font-family: inherit; }
+    ul { list-style: none; }
+
+    /* ═══════════════════════════════════════════
+       ACCESSIBILITY
+    ═══════════════════════════════════════════ */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+    :focus-visible {
+      outline: 2px solid var(--yellow);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+
+    /* ═══════════════════════════════════════════
+       LAYOUT UTILS
+    ═══════════════════════════════════════════ */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+    .section { padding: var(--section-py) 0; }
+    .section--alt { background: var(--surface); }
+    .section-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--green-500);
+      margin-bottom: 12px;
+    }
+    .section-heading {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: clamp(28px, 4vw, 42px); line-height: 1.1;
+      color: var(--green-800); margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 17px; color: var(--muted); max-width: 560px;
+      margin-bottom: 48px; line-height: 1.65;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+
+    /* ═══════════════════════════════════════════
+       BUTTONS
+    ═══════════════════════════════════════════ */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 26px; border-radius: var(--radius-md);
+      font-size: 15px; font-weight: 500; cursor: pointer;
+      border: none; transition: transform .15s, box-shadow .15s, background .15s;
+      text-decoration: none; line-height: 1;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn-primary {
+      background: var(--yellow); color: var(--green-800);
+      box-shadow: 0 4px 20px rgba(245,200,66,.35);
+    }
+    .btn-primary:hover { background: #f0be2a; box-shadow: 0 6px 28px rgba(245,200,66,.45); }
+    .btn-outline {
+      background: transparent; color: var(--white);
+      border: 1.5px solid rgba(255,255,255,.35);
+    }
+    .btn-outline:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.6); }
+    .btn-green {
+      background: var(--green-800); color: var(--white);
+      box-shadow: 0 4px 20px rgba(26,60,46,.25);
+    }
+    .btn-green:hover { background: var(--green-700); }
+    .btn-lg { padding: 16px 34px; font-size: 16px; border-radius: var(--radius-lg); }
+    .btn-full { width: 100%; justify-content: center; }
+
+    /* ═══════════════════════════════════════════
+       NAVBAR
+    ═══════════════════════════════════════════ */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: var(--nav-h);
+      background: rgba(255,255,255,.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow .3s;
+    }
+    .nav.scrolled { box-shadow: var(--shadow-md); }
+    .nav__inner {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 24px;
+      height: 100%; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav__logo {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: 20px; color: var(--green-800); display: flex; align-items: center; gap: 8px;
+    }
+    .nav__logo-icon {
+      width: 32px; height: 32px; background: var(--green-800);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .nav__links { display: flex; align-items: center; gap: 32px; }
+    .nav__links a {
+      font-size: 14px; font-weight: 500; color: var(--muted);
+      transition: color .2s;
+    }
+    .nav__links a:hover { color: var(--green-800); }
+    .nav__cta { display: flex; align-items: center; gap: 12px; }
+    .nav__hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px; background: none; border: none;
+    }
+    .nav__hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: var(--green-800); border-radius: 2px;
+      transition: transform .3s, opacity .3s;
+    }
+    .nav__mobile {
+      display: none; position: fixed; inset: var(--nav-h) 0 0 0;
+      background: var(--white); z-index: 99; flex-direction: column;
+      padding: 32px 24px; gap: 24px;
+    }
+    .nav__mobile.open { display: flex; }
+    .nav__mobile a {
+      font-size: 20px; font-weight: 500; color: var(--green-800);
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+    }
+
+    /* ═══════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════ */
+    .hero {
+      min-height: 100vh; padding-top: var(--nav-h);
+      background: var(--green-800);
+      position: relative; overflow: hidden;
+      display: flex; align-items: center;
+    }
+    .hero__court {
+      position: absolute; inset: 0; opacity: .06;
+      background-image:
+        repeating-linear-gradient(0deg,  transparent, transparent 39px, rgba(255,255,255,1) 39px, rgba(255,255,255,1) 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(255,255,255,1) 79px, rgba(255,255,255,1) 80px);
+    }
+    .hero__glow {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); pointer-events: none;
+    }
+    .hero__glow--a { width: 500px; height: 500px; background: rgba(245,200,66,.12); top: -100px; right: -100px; }
+    .hero__glow--b { width: 400px; height: 400px; background: rgba(93,202,165,.08); bottom: -80px; left: -80px; }
+
+    .hero__inner {
+      position: relative; z-index: 2;
+      max-width: var(--max-w); margin: 0 auto; padding: 80px 24px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+    }
+    .hero__tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(245,200,66,.12); border: 1px solid rgba(245,200,66,.3);
+      color: var(--yellow); font-size: 12px; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 6px 14px; border-radius: 20px; margin-bottom: 24px;
+    }
+    .hero__tag-dot { width: 6px; height: 6px; background: var(--yellow); border-radius: 50%; animation: blink 1.8s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .hero__h1 {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: clamp(36px, 5.5vw, 62px); line-height: 1.05;
+      color: var(--white); margin-bottom: 20px;
+    }
+    .hero__h1 em { color: var(--yellow); font-style: normal; }
+    .hero__sub {
+      font-size: 18px; color: rgba(255,255,255,.7); line-height: 1.65;
+      margin-bottom: 36px; max-width: 440px;
+    }
+    .hero__btns { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 44px; }
+    .hero__stats { display: flex; gap: 32px; flex-wrap: wrap; }
+    .hero__stat-num {
+      font-family: var(--font-display); font-size: 24px; font-weight: 800;
+      color: var(--yellow); display: block;
+    }
+    .hero__stat-lbl { font-size: 12px; color: rgba(255,255,255,.5); }
+
+    /* Hero right: floating agent card */
+    .hero__card {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius-xl);
+      backdrop-filter: blur(8px);
+      overflow: hidden;
+      animation: floatCard 5s ease-in-out infinite;
+    }
+    @keyframes floatCard { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    .hero__card-top {
+      background: rgba(0,0,0,.2); padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .hero__card-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--green-600);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .hero__card-name { font-weight: 600; font-size: 14px; color: var(--white); }
+    .hero__card-online {
+      font-size: 11px; color: #6fcf97;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .pulse { width: 7px; height: 7px; background: #6fcf97; border-radius: 50%; animation: blink 1.5s infinite; }
+    .hero__card-msgs { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .hmsg {
+      max-width: 85%; padding: 10px 14px;
+      font-size: 13px; line-height: 1.5;
+      border-radius: 14px;
+    }
+    .hmsg--bot {
+      background: rgba(255,255,255,.1); color: rgba(255,255,255,.9);
+      border-radius: 4px 14px 14px 14px;
+    }
+    .hmsg--user {
+      align-self: flex-end; background: var(--yellow);
+      color: var(--green-800); font-weight: 500;
+      border-radius: 14px 4px 14px 14px;
+    }
+    .hero__card-ref {
+      font-size: 10px; color: rgba(255,255,255,.4);
+      padding: 0 16px 14px; display: flex; align-items: center; gap: 5px;
+    }
+
+    /* ═══════════════════════════════════════════
+       TRUST BAR
+    ═══════════════════════════════════════════ */
+    .trust { background: var(--green-900); padding: 24px 0; }
+    .trust__inner {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-around;
+      gap: 24px; flex-wrap: wrap;
+    }
+    .trust__item {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: rgba(255,255,255,.55); white-space: nowrap;
+    }
+    .trust__icon { font-size: 18px; }
+    .trust__num { font-family: var(--font-display); font-weight: 700; color: var(--yellow); }
+
+    /* ═══════════════════════════════════════════
+       HOW IT WORKS
+    ═══════════════════════════════════════════ */
+    .steps { counter-reset: step; }
+    .step-card {
+      background: var(--white); border-radius: var(--radius-lg);
+      border: 1px solid var(--border); padding: 32px 28px;
+      position: relative; transition: transform .25s, box-shadow .25s;
+    }
+    .step-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .step-card__num {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--green-800); color: var(--yellow);
+      font-family: var(--font-display); font-weight: 800; font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .step-card__icon { font-size: 28px; margin-bottom: 14px; }
+    .step-card h3 {
+      font-family: var(--font-display); font-weight: 700;
+      font-size: 18px; color: var(--green-800); margin-bottom: 10px;
+    }
+    .step-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ═══════════════════════════════════════════
+       VOICE AGENT
+    ═══════════════════════════════════════════ */
+    .agent-wrap {
+      background: var(--white); border-radius: var(--radius-xl);
+      border: 1px solid var(--border); overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    .agent-header {
+      background: var(--green-800); padding: 16px 22px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .agent-header__left { display: flex; align-items: center; gap: 12px; }
+    .agent-header__avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--green-600); display: flex; align-items: center;
+      justify-content: center; font-size: 20px; flex-shrink: 0;
+    }
+    .agent-header__name { font-weight: 600; font-size: 15px; color: var(--white); }
+    .agent-header__status { font-size: 11px; color: #6fcf97; display: flex; align-items: center; gap: 5px; }
+    .agent-header__badge {
+      background: rgba(245,200,66,.15); border: 1px solid rgba(245,200,66,.3);
+      color: var(--yellow); font-size: 10px; font-weight: 600;
+      letter-spacing: 1px; text-transform: uppercase; padding: 4px 10px; border-radius: 12px;
+    }
+
+    .chat-window {
+      height: 340px; overflow-y: auto; padding: 20px;
+      display: flex; flex-direction: column; gap: 14px;
+      scroll-behavior: smooth;
+      background: var(--surface);
+    }
+    .chat-window::-webkit-scrollbar { width: 4px; }
+    .chat-window::-webkit-scrollbar-track { background: transparent; }
+    .chat-window::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .msg { display: flex; gap: 10px; max-width: 80%; }
+    .msg--bot { align-self: flex-start; }
+    .msg--user { align-self: flex-end; flex-direction: row-reverse; }
+    .msg__avatar {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+      background: var(--green-600); display: flex; align-items: center;
+      justify-content: center; font-size: 15px;
+    }
+    .msg__bubble {
+      padding: 11px 15px; border-radius: 14px;
+      font-size: 14px; line-height: 1.55;
+    }
+    .msg--bot .msg__bubble {
+      background: var(--white); border: 1px solid var(--border);
+      color: var(--text); border-radius: 4px 14px 14px 14px;
+    }
+    .msg--user .msg__bubble {
+      background: var(--green-800); color: var(--white);
+      border-radius: 14px 4px 14px 14px;
+    }
+    .msg__ref {
+      font-size: 11px; color: var(--green-500); margin-top: 5px;
+      display: flex; align-items: center; gap: 4px;
+      padding-left: 2px;
+    }
+    .msg__ref svg { flex-shrink: 0; }
+
+    .typing-indicator {
+      display: none; align-self: flex-start;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 4px 14px 14px 14px;
+      padding: 12px 16px; gap: 5px;
+    }
+    .typing-indicator.visible { display: flex; align-items: center; }
+    .typing-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--subtle);
+      animation: typingBounce 1.2s infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: .2s; }
+    .typing-dot:nth-child(3) { animation-delay: .4s; }
+    @keyframes typingBounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+    .chips {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      padding: 12px 20px; border-bottom: 1px solid var(--border);
+      background: var(--white);
+    }
+    .chip {
+      font-size: 12px; border: 1.5px solid var(--green-600);
+      color: var(--green-600); padding: 5px 12px; border-radius: 20px;
+      cursor: pointer; background: transparent;
+      transition: background .15s, color .15s;
+      white-space: nowrap;
+    }
+    .chip:hover { background: var(--green-600); color: var(--white); }
+
+    .agent-footer {
+      padding: 14px 16px; background: var(--white);
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .mic-btn {
+      width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+      background: var(--green-800); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .15s, box-shadow .15s;
+      position: relative;
+    }
+    .mic-btn:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(26,60,46,.3); }
+    .mic-btn.listening { background: #e53e3e; animation: micPulse 1s infinite; }
+    @keyframes micPulse { 0%,100%{box-shadow:0 0 0 0 rgba(229,62,62,.4)} 70%{box-shadow:0 0 0 12px rgba(229,62,62,0)} }
+    .text-input {
+      flex: 1; border: 1.5px solid var(--border); border-radius: var(--radius-md);
+      padding: 10px 14px; font-size: 14px; color: var(--text);
+      background: var(--surface); transition: border-color .2s;
+      outline: none;
+    }
+    .text-input:focus { border-color: var(--green-600); background: var(--white); }
+    .send-btn {
+      padding: 10px 18px; background: var(--green-800); color: var(--white);
+      border: none; border-radius: var(--radius-md); cursor: pointer;
+      font-size: 14px; font-weight: 500; transition: background .15s;
+      white-space: nowrap;
+    }
+    .send-btn:hover { background: var(--green-700); }
+    .agent-disclaimer {
+      padding: 10px 20px; font-size: 11px; color: var(--subtle);
+      background: var(--surface); text-align: center;
+      border-top: 1px solid var(--border);
+    }
+
+    /* After N queries: email gate */
+    .email-gate {
+      display: none; padding: 20px;
+      background: linear-gradient(135deg, var(--green-50), var(--yellow-lt));
+      border-top: 1px solid var(--border);
+      align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .email-gate.show { display: flex; }
+    .email-gate__text { flex: 1; min-width: 200px; }
+    .email-gate__text strong { color: var(--green-800); font-size: 14px; display: block; }
+    .email-gate__text span { font-size: 13px; color: var(--muted); }
+    .email-gate__form { display: flex; gap: 8px; flex: 1; min-width: 260px; }
+    .email-gate__inp {
+      flex: 1; border: 1.5px solid var(--border); border-radius: var(--radius-md);
+      padding: 9px 12px; font-size: 13px; outline: none;
+    }
+    .email-gate__inp:focus { border-color: var(--green-600); }
+
+    /* ═══════════════════════════════════════════
+       QUIZ GAME
+    ═══════════════════════════════════════════ */
+    .game-wrap {
+      background: var(--white); border-radius: var(--radius-xl);
+      border: 1px solid var(--border); overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    .game-top {
+      background: var(--yellow); padding: 18px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .game-top__title {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: 18px; color: var(--green-800);
+    }
+    .game-top__meta { display: flex; align-items: center; gap: 12px; }
+    .game-score-badge {
+      background: var(--green-800); color: var(--yellow);
+      font-size: 13px; font-weight: 600; padding: 5px 14px; border-radius: 20px;
+    }
+    .game-timer-badge {
+      background: rgba(26,60,46,.15); color: var(--green-800);
+      font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: 20px;
+      min-width: 52px; text-align: center; transition: background .3s, color .3s;
+    }
+    .game-timer-badge.urgent { background: #e53e3e; color: var(--white); }
+
+    .timer-bar { height: 5px; background: rgba(26,60,46,.15); }
+    .timer-fill {
+      height: 5px; background: var(--green-800); border-radius: 0 3px 3px 0;
+      transition: width .9s linear, background .3s;
+    }
+    .timer-fill.urgent { background: #e53e3e; }
+
+    .game-body { padding: 28px 28px 20px; }
+    .game-qnum { font-size: 12px; color: var(--subtle); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .game-question {
+      font-family: var(--font-display); font-weight: 700;
+      font-size: clamp(16px, 2.5vw, 20px); color: var(--text);
+      margin-bottom: 24px; line-height: 1.35;
+    }
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .opt-btn {
+      padding: 14px 16px; border-radius: var(--radius-md);
+      border: 1.5px solid var(--border); background: var(--white);
+      font-size: 14px; color: var(--text); cursor: pointer; text-align: left;
+      transition: border-color .15s, background .15s, color .15s;
+      line-height: 1.4;
+    }
+    .opt-btn:hover:not(:disabled) { border-color: var(--green-600); color: var(--green-800); background: var(--green-50); }
+    .opt-btn.correct { background: #eaf3de; border-color: #3b6d11; color: #173404; pointer-events: none; }
+    .opt-btn.wrong   { background: #fcebeb; border-color: #a32d2d; color: #501313; pointer-events: none; }
+    .opt-btn.dim     { opacity: .45; pointer-events: none; }
+    .opt-btn:disabled { cursor: not-allowed; }
+
+    .game-explain {
+      margin-top: 16px; padding: 14px 16px;
+      background: var(--green-50); border-left: 3px solid var(--green-500);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      font-size: 13px; color: var(--green-700); line-height: 1.55;
+      display: none;
+    }
+    .game-explain.show { display: block; }
+    .game-next-row {
+      display: flex; justify-content: flex-end; margin-top: 20px;
+      padding-top: 16px; border-top: 1px solid var(--border);
+    }
+
+    /* End screen */
+    .end-screen { display: none; }
+    .end-screen.show { display: block; }
+    .end-stars { font-size: 36px; text-align: center; margin-bottom: 8px; letter-spacing: 4px; }
+    .end-score {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: 56px; color: var(--green-800);
+      text-align: center; line-height: 1;
+    }
+    .end-label { text-align: center; font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+    .end-actions { display: flex; flex-direction: column; gap: 10px; }
+
+    /* Progress dots */
+    .progress-dots { display: flex; gap: 6px; justify-content: center; padding: 16px 0 20px; }
+    .pdot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--border); transition: background .3s;
+    }
+    .pdot.done { background: var(--green-500); }
+    .pdot.active { background: var(--green-800); transform: scale(1.3); }
+
+    /* ═══════════════════════════════════════════
+       TESTIMONIALS
+    ═══════════════════════════════════════════ */
+    .testi-card {
+      background: var(--white); border-radius: var(--radius-lg);
+      border: 1px solid var(--border); padding: 28px 24px;
+      transition: transform .25s, box-shadow .25s;
+    }
+    .testi-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .testi-stars { color: var(--yellow); font-size: 14px; margin-bottom: 14px; }
+    .testi-quote { font-size: 15px; line-height: 1.65; color: var(--text); margin-bottom: 20px; font-style: italic; }
+    .testi-author { display: flex; align-items: center; gap: 12px; }
+    .testi-initials {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--green-100); color: var(--green-800);
+      font-weight: 700; font-size: 14px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .testi-name { font-weight: 600; font-size: 14px; color: var(--green-800); }
+    .testi-role { font-size: 12px; color: var(--subtle); }
+
+    /* ═══════════════════════════════════════════
+       LEAD CAPTURE
+    ═══════════════════════════════════════════ */
+    .lead-section {
+      background: var(--green-800); position: relative; overflow: hidden;
+    }
+    .lead-section__glow {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); pointer-events: none;
+    }
+    .lead-section__glow--a { width: 400px; height: 400px; background: rgba(245,200,66,.08); top: -100px; right: -100px; }
+    .lead-section__glow--b { width: 300px; height: 300px; background: rgba(93,202,165,.07); bottom: -50px; left: -50px; }
+    .lead-inner { position: relative; z-index: 2; }
+    .lead-section .section-label { color: rgba(245,200,66,.7); }
+    .lead-section .section-heading { color: var(--white); }
+    .lead-section .section-sub { color: rgba(255,255,255,.65); max-width: 520px; }
+    .lead-benefits { display: flex; flex-direction: column; gap: 14px; margin-bottom: 32px; }
+    .lead-benefit { display: flex; align-items: center; gap: 12px; font-size: 15px; color: rgba(255,255,255,.85); }
+    .lead-check {
+      width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+      background: rgba(245,200,66,.15); border: 1px solid rgba(245,200,66,.3);
+      color: var(--yellow); display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+    }
+
+    .lead-form-card {
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius-xl); padding: 36px 32px;
+      backdrop-filter: blur(8px);
+    }
+    .lead-form-card h3 {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: 22px; color: var(--white); margin-bottom: 8px;
+    }
+    .lead-form-card p { font-size: 14px; color: rgba(255,255,255,.6); margin-bottom: 24px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .form-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.7); letter-spacing: .5px; }
+    .form-inp {
+      padding: 11px 14px; background: rgba(255,255,255,.1);
+      border: 1.5px solid rgba(255,255,255,.18); border-radius: var(--radius-md);
+      color: var(--white); font-size: 14px; outline: none;
+      transition: border-color .2s, background .2s;
+    }
+    .form-inp::placeholder { color: rgba(255,255,255,.35); }
+    .form-inp:focus { border-color: var(--yellow); background: rgba(255,255,255,.15); }
+    .form-inp.error { border-color: #fc8181; }
+    .form-error { font-size: 11px; color: #fc8181; display: none; }
+    .form-error.show { display: block; }
+    .form-select {
+      padding: 11px 14px; background: rgba(255,255,255,.1);
+      border: 1.5px solid rgba(255,255,255,.18); border-radius: var(--radius-md);
+      color: var(--white); font-size: 14px; outline: none; cursor: pointer;
+      -webkit-appearance: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.5)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center;
+    }
+    .form-select option { background: var(--green-800); }
+    .consent-row { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 20px; }
+    .consent-cb { width: 16px; height: 16px; margin-top: 3px; flex-shrink: 0; cursor: pointer; accent-color: var(--yellow); }
+    .consent-label { font-size: 12px; color: rgba(255,255,255,.5); line-height: 1.5; cursor: pointer; }
+    .consent-label a { color: rgba(245,200,66,.7); text-decoration: underline; }
+
+    .form-success {
+      text-align: center; padding: 32px; display: none;
+    }
+    .form-success.show { display: block; }
+    .success-icon { font-size: 48px; margin-bottom: 16px; }
+    .success-title { font-family: var(--font-display); font-weight: 800; font-size: 24px; color: var(--yellow); margin-bottom: 8px; }
+    .success-msg { font-size: 15px; color: rgba(255,255,255,.65); }
+
+    /* ═══════════════════════════════════════════
+       SCROLL REVEAL
+    ═══════════════════════════════════════════ */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .reveal.in-view { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+    .reveal-delay-4 { transition-delay: .4s; }
+
+    /* ═══════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════ */
+    .footer {
+      background: var(--green-900); padding: 48px 0 32px;
+      color: rgba(255,255,255,.5);
+    }
+    .footer__inner {
+      max-width: var(--max-w); margin: 0 auto; padding: 0 24px;
+    }
+    .footer__top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 32px; margin-bottom: 36px; flex-wrap: wrap;
+    }
+    .footer__brand { max-width: 280px; }
+    .footer__logo {
+      font-family: var(--font-display); font-weight: 800; font-size: 18px;
+      color: var(--white); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+    }
+    .footer__tagline { font-size: 13px; line-height: 1.6; }
+    .footer__links h4 { font-size: 12px; font-weight: 600; color: var(--white); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
+    .footer__links li { margin-bottom: 10px; }
+    .footer__links a { font-size: 14px; transition: color .2s; }
+    .footer__links a:hover { color: var(--white); }
+    .footer__social { display: flex; gap: 12px; }
+    .footer__social-link {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; transition: background .2s;
+    }
+    .footer__social-link:hover { background: rgba(255,255,255,.15); }
+    .footer__bottom {
+      border-top: 1px solid rgba(255,255,255,.08); padding-top: 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 16px; flex-wrap: wrap; font-size: 12px;
+    }
+    .footer__disclaimer { max-width: 480px; line-height: 1.5; }
+
+    /* ═══════════════════════════════════════════
+       BACK TO TOP
+    ═══════════════════════════════════════════ */
+    .back-top {
+      position: fixed; bottom: 28px; right: 28px; z-index: 99;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--green-800); color: var(--white);
+      border: none; cursor: pointer; box-shadow: var(--shadow-md);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s, transform .3s;
+    }
+    .back-top.visible { opacity: 1; pointer-events: all; }
+    .back-top:hover { transform: translateY(-3px); }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      :root { --section-py: 64px; }
+      .hero__inner { grid-template-columns: 1fr; gap: 48px; padding: 60px 24px; }
+      .hero__card { max-width: 420px; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 680px) {
+      .nav__links, .nav__cta { display: none; }
+      .nav__hamburger { display: flex; }
+      .hero__h1 { font-size: 34px; }
+      .hero__btns { flex-direction: column; }
+      .hero__btns .btn { width: 100%; justify-content: center; }
+      .hero__stats { gap: 20px; }
+      .options-grid { grid-template-columns: 1fr; }
+      .footer__top { flex-direction: column; }
+      .chips { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 8px; }
+      .agent-footer { flex-wrap: wrap; }
+    }
+
+    /* ═══════════════════════════════════════════
+       TOAST NOTIFICATIONS
+    ═══════════════════════════════════════════ */
+    .toast-container { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 200; }
+    .toast {
+      background: var(--green-800); color: var(--white);
+      padding: 12px 20px; border-radius: var(--radius-md);
+      font-size: 14px; box-shadow: var(--shadow-lg);
+      opacity: 0; transform: translateY(12px);
+      transition: opacity .3s, transform .3s;
+      pointer-events: none; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
 </head>
-<body class="gradient-bg text-white font-sans min-h-screen">
 
-    <header class="container mx-auto px-6 py-12 text-center">
-        <h1 class="text-5xl md:text-7xl font-extrabold mb-4">Padel<span class="padel-green">Ref</span> AI</h1>
-        <p class="text-xl text-slate-300 mb-8">The world's first AI voice agent for court-side rule disputes.</p>
-        
-        <div class="flex justify-center gap-4">
-            <a href="#game" class="bg-padel-green text-black px-8 py-3 rounded-full font-bold hover:scale-105 transition">Play the Quiz</a>
-            <button onclick="toggleVoice()" class="glass px-8 py-3 rounded-full font-bold hover:bg-white/10 transition">Try Voice Demo</button>
-        </div>
-    </header>
+<body>
 
-    <section id="game" class="container mx-auto px-6 py-12">
-        <div class="max-w-2xl mx-auto glass rounded-3xl p-8 shadow-2xl">
-            <div id="game-container">
-                <div class="flex justify-between items-center mb-6">
-                    <span class="text-sm uppercase tracking-widest text-slate-400">Rule or No Rule?</span>
-                    <span id="score" class="padel-green font-bold">Score: 0</span>
-                </div>
-                
-                <div id="question-box" class="mb-8">
-                    <h2 id="question-text" class="text-2xl font-semibold mb-4 italic">"The ball hits the fence directly after the serve. Is it a fault?"</h2>
-                    <div id="feedback" class="hidden p-4 rounded-lg mb-4 text-center font-bold"></div>
-                </div>
+  <!-- ═══════════════════════════════════════
+       SKIP LINK (accessibility)
+  ═══════════════════════════════════════ -->
+  <a class="sr-only" href="#main-content" style="position:fixed;top:8px;left:8px;z-index:999;background:var(--yellow);color:var(--green-800);padding:8px 16px;border-radius:6px;font-weight:600;">Skip to main content</a>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <button onclick="checkAnswer(true)" class="bg-green-600 hover:bg-green-500 p-4 rounded-xl font-bold transition">VALID POINT</button>
-                    <button onclick="checkAnswer(false)" class="bg-red-600 hover:bg-red-500 p-4 rounded-xl font-bold transition">FAULT / OUT</button>
-                </div>
+  <!-- ═══════════════════════════════════════
+       NAVBAR
+  ═══════════════════════════════════════ -->
+  <nav class="nav" role="navigation" aria-label="Main navigation" id="navbar">
+    <div class="nav__inner">
+      <a href="#" class="nav__logo" aria-label="PadelIQ home">
+        <div class="nav__logo-icon" aria-hidden="true">🎾</div>
+        PadelIQ
+      </a>
+      <ul class="nav__links" role="list">
+        <li><a href="#how-it-works">How it works</a></li>
+        <li><a href="#voice-agent">Voice Agent</a></li>
+        <li><a href="#quiz">Quiz Game</a></li>
+        <li><a href="#testimonials">Reviews</a></li>
+      </ul>
+      <div class="nav__cta">
+        <a href="#lead" class="btn btn-primary" style="padding:10px 20px;font-size:14px;">Get free handbook</a>
+      </div>
+      <button class="nav__hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div class="nav__mobile" id="mobile-menu" role="dialog" aria-label="Mobile navigation">
+    <a href="#how-it-works" onclick="closeMobileMenu()">How it works</a>
+    <a href="#voice-agent" onclick="closeMobileMenu()">Voice Agent</a>
+    <a href="#quiz" onclick="closeMobileMenu()">Quiz Game</a>
+    <a href="#testimonials" onclick="closeMobileMenu()">Reviews</a>
+    <a href="#lead" onclick="closeMobileMenu()" class="btn btn-primary btn-full">Get free handbook</a>
+  </div>
+
+  <main id="main-content">
+
+    <!-- ═══════════════════════════════════════
+         HERO
+    ═══════════════════════════════════════ -->
+    <section class="hero" aria-label="Hero">
+      <div class="hero__court" aria-hidden="true"></div>
+      <div class="hero__glow hero__glow--a" aria-hidden="true"></div>
+      <div class="hero__glow hero__glow--b" aria-hidden="true"></div>
+
+      <div class="hero__inner">
+        <div class="hero__content">
+          <div class="hero__tag" aria-label="Voice AI Padel Rules">
+            <span class="hero__tag-dot" aria-hidden="true"></span>
+            Voice AI · Padel Rules
+          </div>
+          <h1 class="hero__h1">Never argue about a<br><em>padel rule</em> again.</h1>
+          <p class="hero__sub">Ask our AI referee, Padel Pete, in plain English. Get the exact FIP rule in seconds — with the official citation.</p>
+          <div class="hero__btns">
+            <a href="#voice-agent" class="btn btn-primary btn-lg">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+              Ask the AI referee
+            </a>
+            <a href="#quiz" class="btn btn-outline btn-lg">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Play the quiz
+            </a>
+          </div>
+          <div class="hero__stats" role="list">
+            <div role="listitem">
+              <span class="hero__stat-num" id="counter-queries" aria-label="12000 plus questions answered">0</span>
+              <span class="hero__stat-lbl">Rules questions answered</span>
             </div>
-
-            <div id="lead-capture" class="hidden text-center animate-fade-in">
-                <h2 class="text-3xl font-bold mb-4">You're a Padel Pro! 🎾</h2>
-                <p class="text-slate-300 mb-6">Get our "Hidden Rules" PDF and early access to the Voice Agent.</p>
-                <form onsubmit="handleLead(event)" class="space-y-4">
-                    <input type="email" required placeholder="Enter your email" class="w-full p-4 rounded-xl bg-slate-800 border border-slate-700 focus:outline-none focus:border-padel-green">
-                    <button type="submit" class="w-full bg-padel-green text-black p-4 rounded-xl font-bold uppercase tracking-widest">Get Early Access</button>
-                </form>
+            <div role="listitem">
+              <span class="hero__stat-num">FIP</span>
+              <span class="hero__stat-lbl">Official rulebook sourced</span>
             </div>
+            <div role="listitem">
+              <span class="hero__stat-num">Free</span>
+              <span class="hero__stat-lbl">Always, forever</span>
+            </div>
+          </div>
         </div>
+
+        <!-- Hero floating card -->
+        <div class="hero__card" aria-hidden="true">
+          <div class="hero__card-top">
+            <div class="hero__card-avatar">🎾</div>
+            <div>
+              <div class="hero__card-name">Padel Pete</div>
+              <div class="hero__card-online"><span class="pulse"></span> Online · FIP Official Rules</div>
+            </div>
+          </div>
+          <div class="hero__card-msgs">
+            <div class="hmsg hmsg--user">Can the ball hit the glass before I return it?</div>
+            <div class="hmsg hmsg--bot">Yes! After bouncing once on your side, the ball can hit the glass walls or wire mesh — you can still play it. You must return it before it bounces a second time on the ground.</div>
+          </div>
+          <div class="hero__card-ref">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            FIP Rule 18 · Ball in Play
+          </div>
+        </div>
+      </div>
     </section>
 
-    <div id="voice-overlay" class="fixed inset-0 bg-black/90 hidden flex-col items-center justify-center z-50">
-        <div class="relative">
-            <div class="w-32 h-32 bg-padel-green rounded-full animate-ping opacity-20 absolute inset-0"></div>
-            <div class="w-32 h-32 bg-padel-green rounded-full flex items-center justify-center relative">
-                <i class="fa-solid fa-microphone text-4xl text-black"></i>
-            </div>
+    <!-- ═══════════════════════════════════════
+         TRUST BAR
+    ═══════════════════════════════════════ -->
+    <div class="trust" aria-label="Trust signals">
+      <div class="trust__inner">
+        <div class="trust__item">
+          <span class="trust__icon" aria-hidden="true">📋</span>
+          <span>Based on <span class="trust__num">FIP</span> official rules</span>
         </div>
-        <p class="mt-8 text-2xl font-light">"Ask me a rule..."</p>
-        <p id="voice-transcript" class="mt-4 text-slate-400 italic">Listening for: "Can I hit the ball out of court?"</p>
-        <button onclick="toggleVoice()" class="mt-12 text-slate-500 underline">Close Demo</button>
+        <div class="trust__item">
+          <span class="trust__icon" aria-hidden="true">⚡</span>
+          <span>Answer in <span class="trust__num">&lt;3s</span></span>
+        </div>
+        <div class="trust__item">
+          <span class="trust__icon" aria-hidden="true">🌍</span>
+          <span>Used in <span class="trust__num">40+</span> countries</span>
+        </div>
+        <div class="trust__item">
+          <span class="trust__icon" aria-hidden="true">🎾</span>
+          <span><span class="trust__num">12,000+</span> questions answered</span>
+        </div>
+      </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- ═══════════════════════════════════════
+         HOW IT WORKS
+    ═══════════════════════════════════════ -->
+    <section class="section" id="how-it-works" aria-labelledby="hiw-heading">
+      <div class="container">
+        <div class="reveal">
+          <p class="section-label">How it works</p>
+          <h2 class="section-heading" id="hiw-heading">Play with confidence in 3 steps</h2>
+          <p class="section-sub">From question to answer in under 3 seconds. No more referee disputes, no more mid-match arguments.</p>
+        </div>
+        <div class="grid-3 steps">
+          <div class="step-card reveal reveal-delay-1">
+            <div class="step-card__num" aria-hidden="true">1</div>
+            <div class="step-card__icon" aria-hidden="true">🎙️</div>
+            <h3>Ask</h3>
+            <p>Speak or type any padel rules question in plain conversational English — no technical jargon needed.</p>
+          </div>
+          <div class="step-card reveal reveal-delay-2">
+            <div class="step-card__num" aria-hidden="true">2</div>
+            <div class="step-card__icon" aria-hidden="true">📖</div>
+            <h3>Get the rule</h3>
+            <p>Padel Pete searches the official FIP rulebook and returns the exact rule — with its citation — in plain language.</p>
+          </div>
+          <div class="step-card reveal reveal-delay-3">
+            <div class="step-card__num" aria-hidden="true">3</div>
+            <div class="step-card__icon" aria-hidden="true">🏆</div>
+            <h3>Play on</h3>
+            <p>Settle disputes in seconds, avoid mis-calls, and get back to what matters — the game.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         VOICE AGENT
+    ═══════════════════════════════════════ -->
+    <section class="section section--alt" id="voice-agent" aria-labelledby="agent-heading">
+      <div class="container">
+        <div class="reveal" style="max-width:680px;">
+          <p class="section-label">AI Voice Agent</p>
+          <h2 class="section-heading" id="agent-heading">Ask Padel Pete anything</h2>
+          <p class="section-sub">Tap the microphone or type your question below. Padel Pete has read the entire FIP rulebook so you don't have to.</p>
+        </div>
+
+        <div class="agent-wrap reveal" role="region" aria-label="Padel Pete AI chat">
+          <div class="agent-header">
+            <div class="agent-header__left">
+              <div class="agent-header__avatar" aria-hidden="true">🎾</div>
+              <div>
+                <div class="agent-header__name">Padel Pete</div>
+                <div class="agent-header__status">
+                  <span class="pulse" aria-hidden="true"></span>
+                  Online · Answering rules questions
+                </div>
+              </div>
+            </div>
+            <div class="agent-header__badge">FIP Official Rules</div>
+          </div>
+
+          <!-- Quick chips -->
+          <div class="chips" role="list" aria-label="Sample questions">
+            <button class="chip" role="listitem" onclick="askAgent('How many serves do you get per point?')">Serve rules</button>
+            <button class="chip" role="listitem" onclick="askAgent('Can the ball bounce off the glass wall?')">Wall & glass</button>
+            <button class="chip" role="listitem" onclick="askAgent('What is a let in padel?')">What is a let?</button>
+            <button class="chip" role="listitem" onclick="askAgent('How does padel scoring work?')">Scoring</button>
+            <button class="chip" role="listitem" onclick="askAgent('What are the court dimensions?')">Court size</button>
+            <button class="chip" role="listitem" onclick="askAgent('When is a serve a fault?')">Service fault</button>
+          </div>
+
+          <!-- Chat window -->
+          <div class="chat-window" id="chat-window" role="log" aria-live="polite" aria-label="Conversation">
+            <div class="msg msg--bot">
+              <div class="msg__avatar" aria-hidden="true">🎾</div>
+              <div>
+                <div class="msg__bubble">
+                  Hi! I'm Padel Pete, your official padel rules referee. Ask me any rules question — service rules, wall bounces, scoring, equipment — I've got the FIP rulebook memorised.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Typing indicator -->
+          <div class="typing-indicator" id="typing" aria-label="Padel Pete is thinking">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+
+          <!-- Email gate (shown after 3 queries) -->
+          <div class="email-gate" id="email-gate" role="complementary" aria-label="Get the full rules guide">
+            <div class="email-gate__text">
+              <strong>📖 Want the full rules guide?</strong>
+              <span>Enter your email for the official FIP handbook PDF — free.</span>
+            </div>
+            <form class="email-gate__form" id="gate-form" novalidate>
+              <input type="email" class="email-gate__inp" id="gate-email" placeholder="your@email.com" aria-label="Email for rules guide" required />
+              <button type="submit" class="btn btn-primary" style="padding:9px 16px;font-size:13px;white-space:nowrap;">Send me the PDF</button>
+            </form>
+          </div>
+
+          <!-- Input row -->
+          <div class="agent-footer">
+            <button class="mic-btn" id="mic-btn" aria-label="Toggle voice input" aria-pressed="false">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+                <line x1="8" y1="23" x2="16" y2="23"/>
+              </svg>
+            </button>
+            <input
+              type="text"
+              class="text-input"
+              id="chat-input"
+              placeholder="Type a rules question..."
+              aria-label="Type your rules question"
+              autocomplete="off"
+              maxlength="300"
+            />
+            <button class="send-btn" id="send-btn" aria-label="Send question">Send →</button>
+          </div>
+          <p class="agent-disclaimer">
+            Padel Pete is powered by AI and references official FIP rules. For official tournament disputes, consult a certified referee.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         QUIZ GAME
+    ═══════════════════════════════════════ -->
+    <section class="section" id="quiz" aria-labelledby="quiz-heading">
+      <div class="container">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;">
+          <div class="reveal">
+            <p class="section-label">Mini-game</p>
+            <h2 class="section-heading" id="quiz-heading">Know the Rule?</h2>
+            <p class="section-sub">5 rapid-fire padel rules questions. 15 seconds each. Find out how well you really know the game.</p>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div style="display:flex;align-items:center;gap:12px;font-size:15px;color:var(--muted);">
+                <span style="font-size:20px;">⚡</span> 15 seconds per question — no time to Google it
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;font-size:15px;color:var(--muted);">
+                <span style="font-size:20px;">📖</span> Instant rule explanation after each answer
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;font-size:15px;color:var(--muted);">
+                <span style="font-size:20px;">🏆</span> Share your score with teammates
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;font-size:15px;color:var(--muted);">
+                <span style="font-size:20px;">🔄</span> Randomised questions every time
+              </div>
+            </div>
+          </div>
+
+          <div class="reveal reveal-delay-2">
+            <div class="game-wrap" role="region" aria-label="Know the Rule quiz game">
+              <!-- Game: Question state -->
+              <div id="game-state">
+                <div class="game-top">
+                  <div class="game-top__title">⚡ Know the Rule?</div>
+                  <div class="game-top__meta">
+                    <div class="game-score-badge" id="game-score" aria-live="polite" aria-label="Score">0 pts</div>
+                    <div class="game-timer-badge" id="game-timer" aria-live="polite" aria-label="Time remaining">15s</div>
+                  </div>
+                </div>
+                <div class="timer-bar" role="progressbar" aria-valuemin="0" aria-valuemax="15" aria-valuenow="15" aria-label="Time remaining">
+                  <div class="timer-fill" id="timer-fill" style="width:100%"></div>
+                </div>
+                <div class="game-body">
+                  <div class="progress-dots" id="progress-dots" aria-label="Question progress"></div>
+                  <div class="game-qnum" id="game-qnum" aria-label="Question number">Question 1 of 5</div>
+                  <div class="game-question" id="game-question">Loading question...</div>
+                  <div class="options-grid" id="options-grid" role="group" aria-label="Answer options"></div>
+                  <div class="game-explain" id="game-explain" role="alert"></div>
+                  <div class="game-next-row">
+                    <button class="btn btn-green" id="next-btn" style="display:none;" onclick="nextQuestion()">
+                      Next question →
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Game: End screen -->
+              <div class="end-screen" id="end-screen">
+                <div class="game-top" style="background:var(--green-800);">
+                  <div class="game-top__title" style="color:var(--yellow);">⚡ Know the Rule?</div>
+                  <div class="game-score-badge" id="end-score-badge">Game over</div>
+                </div>
+                <div class="game-body">
+                  <div class="end-stars" id="end-stars" aria-label="Rating">⭐⭐⭐</div>
+                  <div class="end-score" id="end-score" aria-label="Final score"></div>
+                  <div class="end-label" id="end-label">Share your score with teammates?</div>
+                  <div class="end-actions">
+                    <button class="btn btn-primary btn-full" id="share-btn" onclick="shareScore()">
+                      📤 Share my score
+                    </button>
+                    <button class="btn btn-green btn-full" onclick="restartGame()">
+                      🔄 Play again
+                    </button>
+                    <a href="#lead" class="btn btn-full" style="background:var(--green-50);color:var(--green-800);border:1.5px solid var(--green-100);">
+                      📖 Get 40 more questions + full PDF
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         TESTIMONIALS
+    ═══════════════════════════════════════ -->
+    <section class="section section--alt" id="testimonials" aria-labelledby="testi-heading">
+      <div class="container">
+        <div class="reveal" style="text-align:center;max-width:560px;margin:0 auto;">
+          <p class="section-label">Testimonials</p>
+          <h2 class="section-heading" id="testi-heading">What players are saying</h2>
+          <p class="section-sub" style="margin:0 auto 48px;">From beginners to coaches — PadelIQ is changing how people play and learn.</p>
+        </div>
+        <div class="grid-3">
+          <article class="testi-card reveal reveal-delay-1">
+            <div class="testi-stars" aria-label="5 stars">★★★★★</div>
+            <p class="testi-quote">"We used to spend 5 minutes arguing every time a ball hit the glass post-bounce. Now we just ask Pete. Settled in seconds."</p>
+            <div class="testi-author">
+              <div class="testi-initials" aria-hidden="true">MR</div>
+              <div>
+                <div class="testi-name">Marco R.</div>
+                <div class="testi-role">Club coach, Madrid</div>
+              </div>
+            </div>
+          </article>
+          <article class="testi-card reveal reveal-delay-2">
+            <div class="testi-stars" aria-label="5 stars">★★★★★</div>
+            <p class="testi-quote">"The quiz helped me realise I'd been playing the service rule wrong for two years. My whole club got humbled."</p>
+            <div class="testi-author">
+              <div class="testi-initials" aria-hidden="true">SK</div>
+              <div>
+                <div class="testi-name">Sarah K.</div>
+                <div class="testi-role">Intermediate player, London</div>
+              </div>
+            </div>
+          </article>
+          <article class="testi-card reveal reveal-delay-3">
+            <div class="testi-stars" aria-label="4 stars">★★★★☆</div>
+            <p class="testi-quote">"As an organiser, rule disputes slow everything down. I showed my players PadelIQ before the tournament and we had zero arguments all day."</p>
+            <div class="testi-author">
+              <div class="testi-initials" aria-hidden="true">LL</div>
+              <div>
+                <div class="testi-name">Lena L.</div>
+                <div class="testi-role">Tournament organiser, Amsterdam</div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         LEAD CAPTURE
+    ═══════════════════════════════════════ -->
+    <section class="section lead-section" id="lead" aria-labelledby="lead-heading">
+      <div class="lead-section__glow lead-section__glow--a" aria-hidden="true"></div>
+      <div class="lead-section__glow lead-section__glow--b" aria-hidden="true"></div>
+      <div class="container lead-inner">
+        <div class="grid-2" style="align-items:center;gap:80px;">
+          <div class="reveal">
+            <p class="section-label">Free handbook</p>
+            <h2 class="section-heading" id="lead-heading">Get the official padel rules handbook</h2>
+            <p class="section-sub">Everything you need to play with confidence. Free PDF, no credit card, no catch.</p>
+            <div class="lead-benefits" role="list">
+              <div role="listitem" class="lead-benefit">
+                <div class="lead-check" aria-hidden="true">✓</div>
+                Complete FIP official rules — all 26 sections
+              </div>
+              <div role="listitem" class="lead-benefit">
+                <div class="lead-check" aria-hidden="true">✓</div>
+                40-question quiz with full answers and explanations
+              </div>
+              <div role="listitem" class="lead-benefit">
+                <div class="lead-check" aria-hidden="true">✓</div>
+                Quick-reference cheatsheet — print and take to court
+              </div>
+              <div role="listitem" class="lead-benefit">
+                <div class="lead-check" aria-hidden="true">✓</div>
+                Weekly padel tips newsletter (unsubscribe any time)
+              </div>
+            </div>
+          </div>
+
+          <div class="reveal reveal-delay-2">
+            <div class="lead-form-card" role="region" aria-label="Sign up for free handbook">
+              <h3>Get your free handbook</h3>
+              <p>Delivered to your inbox in under 60 seconds.</p>
+
+              <div id="lead-form-wrap">
+                <form id="lead-form" novalidate aria-label="Lead capture form">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label" for="first-name">First name</label>
+                      <input type="text" class="form-inp" id="first-name" name="firstName" placeholder="Alex" autocomplete="given-name" required aria-required="true" />
+                      <span class="form-error" id="err-first-name" role="alert">Please enter your first name</span>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="lead-email">Email address</label>
+                      <input type="email" class="form-inp" id="lead-email" name="email" placeholder="alex@email.com" autocomplete="email" required aria-required="true" />
+                      <span class="form-error" id="err-email" role="alert">Please enter a valid email</span>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="player-level">Your player level</label>
+                    <select class="form-select form-inp" id="player-level" name="playerLevel" aria-required="true">
+                      <option value="" disabled selected>Select your level</option>
+                      <option value="beginner">Beginner</option>
+                      <option value="intermediate">Intermediate</option>
+                      <option value="advanced">Advanced</option>
+                      <option value="coach">Coach / Instructor</option>
+                      <option value="organiser">Tournament Organiser</option>
+                    </select>
+                  </div>
+                  <div class="consent-row">
+                    <input type="checkbox" class="consent-cb" id="gdpr-consent" name="consent" required aria-required="true" />
+                    <label class="consent-label" for="gdpr-consent">
+                      I agree to receive the free handbook and occasional padel tips from PadelIQ.
+                      <a href="#" onclick="return false">Privacy policy</a>. Unsubscribe any time, no spam.
+                    </label>
+                  </div>
+                  <span class="form-error" id="err-consent" role="alert">Please accept to continue</span>
+                  <button type="submit" class="btn btn-primary btn-full" style="font-size:15px;padding:14px;">
+                    📖 Send me the free handbook →
+                  </button>
+                </form>
+              </div>
+
+              <div class="form-success" id="form-success" role="alert" aria-live="assertive">
+                <div class="success-icon" aria-hidden="true">🎾</div>
+                <div class="success-title">Check your inbox!</div>
+                <p class="success-msg">The PadelIQ Rules Handbook is on its way. Welcome to the community — you'll be settling rule disputes in style from now on.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════ -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+      <div class="footer__top">
+        <div class="footer__brand">
+          <div class="footer__logo">🎾 PadelIQ</div>
+          <p class="footer__tagline">The AI padel rules referee — powered by official FIP rulebooks. Never argue about a rule again.</p>
+          <div class="footer__social" style="margin-top:20px;" aria-label="Social media links">
+            <a href="#" class="footer__social-link" aria-label="Instagram">📷</a>
+            <a href="#" class="footer__social-link" aria-label="TikTok">🎵</a>
+            <a href="#" class="footer__social-link" aria-label="YouTube">▶️</a>
+          </div>
+        </div>
+        <nav aria-label="Footer navigation">
+          <ul class="footer__links">
+            <li><h4>Product</h4></li>
+            <li><a href="#voice-agent">Voice Agent</a></li>
+            <li><a href="#quiz">Quiz Game</a></li>
+            <li><a href="#lead">Free Handbook</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Footer legal navigation">
+          <ul class="footer__links">
+            <li><h4>Legal</h4></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="footer__bottom">
+        <p>© 2026 PadelIQ. All rights reserved.</p>
+        <p class="footer__disclaimer">PadelIQ is an independent product and is not affiliated with or endorsed by the Federación Internacional de Pádel (FIP) or the World Padel Tour (WPT). Always consult a certified referee for official tournament disputes.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <button class="back-top" id="back-top" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <!-- Toast -->
+  <div class="toast-container" aria-live="polite">
+    <div class="toast" id="toast" role="status"></div>
+  </div>
+
+  <script>
+  (() => {
+    'use strict';
+
+    /* ─────────────────────────────────────────
+       NAVBAR — scroll shadow + hamburger
+    ───────────────────────────────────────── */
+    const navbar = document.getElementById('navbar');
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+      document.getElementById('back-top').classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+
+    hamburger.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      hamburger.setAttribute('aria-expanded', isOpen);
+    });
+
+    window.closeMobileMenu = () => {
+      mobileMenu.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+    };
+
+    /* Close mobile menu on outside click */
+    document.addEventListener('click', e => {
+      if (!navbar.contains(e.target) && !mobileMenu.contains(e.target)) closeMobileMenu();
+    });
+
+    /* ─────────────────────────────────────────
+       COUNTER ANIMATION (hero stats)
+    ───────────────────────────────────────── */
+    function animateCounter(el, target, duration = 1800) {
+      let start = null;
+      const step = ts => {
+        if (!start) start = ts;
+        const progress = Math.min((ts - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.floor(eased * target).toLocaleString() + '+';
+        if (progress < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+
+    const counterEl = document.getElementById('counter-queries');
+    let counterStarted = false;
+    const counterObs = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && !counterStarted) {
+        counterStarted = true;
+        animateCounter(counterEl, 12000);
+      }
+    });
+    counterObs.observe(counterEl);
+
+    /* ─────────────────────────────────────────
+       SCROLL REVEAL
+    ───────────────────────────────────────── */
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in-view');
+          revealObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+    /* ─────────────────────────────────────────
+       TOAST
+    ───────────────────────────────────────── */
+    function showToast(msg, duration = 3000) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), duration);
+    }
+
+    /* ─────────────────────────────────────────
+       VOICE AGENT
+    ───────────────────────────────────────── */
+    const RULES_KB = {
+      serve: {
+        keywords: ['serv', 'serve', 'service', 'fault', 'let'],
+        answer: 'Each player gets <strong>one service attempt per point</strong>. The server must stand behind the service line on the correct side. If the serve clips the net and lands in the correct service box, a <em>let</em> is called and the serve is replayed — no fault awarded. A serve that lands outside the box or fails to cross the net is a <strong>fault</strong> and the point is lost immediately.',
+        ref: 'FIP Rule 14 · Service'
+      },
+      wall: {
+        keywords: ['glass', 'wall', 'bounce', 'mesh', 'wire', 'fenc'],
+        answer: 'After the ball bounces <strong>once on your side of the court</strong>, it may hit the glass walls or wire mesh fence and still be in play — you can return it. You must return the ball before it <strong>bounces a second time on the ground</strong>. If the ball hits the wire before bouncing on the ground, the rally continues. If it goes over the fence out of the enclosure, the point is lost.',
+        ref: 'FIP Rule 18 · Ball in Play'
+      },
+      scoring: {
+        keywords: ['scor', 'point', 'game', 'set', 'match', 'deuce', '40', 'tiebreak', 'golden'],
+        answer: 'Padel uses standard tennis scoring: <strong>15 · 30 · 40 · Game</strong>. Matches are best of 3 sets; each set is first to 6 games (must win by 2). A tiebreak is played at 6–6 in sets 1 and 2. Many formats use a <strong>golden point at deuce</strong> (sudden death) — the receiver chooses which side to receive from.',
+        ref: 'FIP Rule 26 · Scoring'
+      },
+      let: {
+        keywords: ['let', 'replay', 'interrupt', 'disturbance'],
+        answer: 'A <strong>let</strong> is called when play must be replayed without penalty. Common causes: (1) the serve clips the net and lands correctly in the service box; (2) an external disturbance interrupts play (ball from another court, spectator intrusion); (3) players are not ready. When a let is called, the entire point — including the serve — is replayed.',
+        ref: 'FIP Rule 22 · Let'
+      },
+      court: {
+        keywords: ['court', 'dimension', 'size', 'width', 'length', 'metre', 'meter', 'big'],
+        answer: 'A regulation padel court is <strong>20 metres long × 10 metres wide</strong>, fully enclosed by glass walls and wire mesh fencing. The net is 88 cm high at the posts and 92 cm high at the centre. The service boxes are 6.95 metres long each side. The court must be made of artificial grass, concrete, or a suitable sports surface.',
+        ref: 'FIP Court Specifications · Annex 1'
+      },
+      equipment: {
+        keywords: ['racket', 'bat', 'padel', 'equip', 'ball', 'weight', 'hole', 'string'],
+        answer: 'A padel racket must have a <strong>maximum length of 45.5 cm</strong>, maximum width 26 cm, and maximum thickness 38 mm. It must not have strings — the hitting surface is solid with holes. Official padel balls must weigh between <strong>56–59.4 grams</strong> and have a diameter of 6.35–6.77 cm.',
+        ref: 'FIP Rule 2 · Equipment'
+      },
+      position: {
+        keywords: ['position', 'switch', 'side', 'cross', 'partner', 'net', 'touch'],
+        answer: 'Players can <strong>switch sides with their partner</strong> at any time during a rally — there are no restrictions on movement within your own court. However, you may not touch the net, reach into the opponents\' half, or lean over the net to play the ball. Touching the net with body or racket during play loses the point.',
+        ref: 'FIP Rule 20 · Conduct of Play'
+      },
+    };
+
+    const FALLBACK = {
+      answer: 'Great question! That\'s a nuanced padel rules situation. Based on general FIP principles, play is governed by the spirit of fair competition and the specific rules for ball-in-play scenarios. I\'d recommend checking <strong>FIP Rules 14–26</strong> for the most relevant section. Would you like me to look up something more specific?',
+      ref: 'FIP Official Rulebook · fip-padel.com'
+    };
+
+    function findAnswer(query) {
+      const q = query.toLowerCase();
+      for (const key of Object.keys(RULES_KB)) {
+        const kb = RULES_KB[key];
+        if (kb.keywords.some(kw => q.includes(kw))) return kb;
+      }
+      return FALLBACK;
+    }
+
+    let queryCount = 0;
+    const MAX_FREE_QUERIES = 3;
+
+    function appendMsg(html, ref, isUser = false) {
+      const win = document.getElementById('chat-window');
+      const div = document.createElement('div');
+      div.className = `msg msg--${isUser ? 'user' : 'bot'}`;
+      if (isUser) {
+        div.innerHTML = `<div class="msg__bubble">${html}</div>`;
+      } else {
+        div.innerHTML = `
+          <div class="msg__avatar" aria-hidden="true">🎾</div>
+          <div>
+            <div class="msg__bubble">${html}</div>
+            ${ref ? `<div class="msg__ref"><svg aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>${ref}</div>` : ''}
+          </div>`;
+      }
+      win.appendChild(div);
+      win.scrollTop = win.scrollHeight;
+      return div;
+    }
+
+    function setTyping(visible) {
+      const t = document.getElementById('typing');
+      t.classList.toggle('visible', visible);
+      const win = document.getElementById('chat-window');
+      win.scrollTop = win.scrollHeight;
+    }
+
+    window.askAgent = function(question) {
+      const input = document.getElementById('chat-input');
+      input.value = question;
+      sendMessage();
+    };
+
+    function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const q = input.value.trim();
+      if (!q) return;
+
+      input.value = '';
+      appendMsg(q, null, true);
+      setTyping(true);
+
+      queryCount++;
+
+      // Show email gate after max free queries
+      if (queryCount >= MAX_FREE_QUERIES) {
+        document.getElementById('email-gate').classList.add('show');
+      }
+
+      const delay = 700 + Math.random() * 600;
+      setTimeout(() => {
+        setTyping(false);
+        const result = findAnswer(q);
+        appendMsg(result.answer, result.ref);
+      }, delay);
+    }
+
+    document.getElementById('send-btn').addEventListener('click', sendMessage);
+    document.getElementById('chat-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+
+    /* Microphone (Web Speech API) */
+    const micBtn = document.getElementById('mic-btn');
+    let recognition = null;
+    let isListening = false;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SR();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.addEventListener('result', e => {
+        const transcript = e.results[0][0].transcript;
+        document.getElementById('chat-input').value = transcript;
+        sendMessage();
+      });
+
+      recognition.addEventListener('end', () => {
+        isListening = false;
+        micBtn.classList.remove('listening');
+        micBtn.setAttribute('aria-pressed', 'false');
+        micBtn.setAttribute('aria-label', 'Toggle voice input');
+      });
+
+      recognition.addEventListener('error', e => {
+        isListening = false;
+        micBtn.classList.remove('listening');
+        if (e.error === 'not-allowed') {
+          showToast('🎙️ Microphone access denied. Please allow mic access and try again.');
+        }
+      });
+
+      micBtn.addEventListener('click', () => {
+        if (isListening) {
+          recognition.stop();
+        } else {
+          recognition.start();
+          isListening = true;
+          micBtn.classList.add('listening');
+          micBtn.setAttribute('aria-pressed', 'true');
+          micBtn.setAttribute('aria-label', 'Stop listening');
+        }
+      });
+    } else {
+      micBtn.setAttribute('title', 'Voice input not supported in this browser');
+      micBtn.style.opacity = '0.45';
+      micBtn.addEventListener('click', () => showToast('🎙️ Voice input requires Chrome or Edge.'));
+    }
+
+    /* Email gate form */
+    document.getElementById('gate-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const email = document.getElementById('gate-email').value.trim();
+      if (!email || !email.includes('@')) { showToast('Please enter a valid email address.'); return; }
+      document.getElementById('email-gate').innerHTML = `<div style="padding:12px 20px;font-size:13px;color:var(--green-700);">✅ Handbook sent to <strong>${email}</strong> — check your inbox!</div>`;
+      showToast('📖 Handbook on its way!');
+    });
+
+    /* ─────────────────────────────────────────
+       QUIZ GAME
+    ───────────────────────────────────────── */
+    const ALL_QUESTIONS = [
+      { q: 'How many service attempts does a player get per point?', opts: ['Two (like tennis)', 'One only', 'Three if hitting the net', 'Unlimited lets'], ans: 1, explain: 'Each player has just one service attempt. If the serve hits the net and lands correctly, a let is called and it is replayed — this is not considered a fault.' },
+      { q: 'After a bounce, the ball hits the glass back wall. What happens?', opts: ['Point is lost immediately', 'Ball is still in play — return it', 'Let is called', 'Ball must be replayed'], ans: 1, explain: 'After one bounce on your side, the ball can hit the glass walls or wire mesh and remain in play. You must return it before a second bounce on the ground.' },
+      { q: 'What is the standard width of an official padel court?', opts: ['8 metres', '9 metres', '10 metres', '12 metres'], ans: 2, explain: 'A regulation padel court is exactly 10m wide × 20m long, enclosed by glass and wire fencing. (FIP Annex 1)' },
+      { q: 'At deuce (40-40), what happens in modern WPT padel format?', opts: ['Server wins', 'Receiver wins', 'Golden point — one rally decides', 'Replay from 30-30'], ans: 2, explain: 'The World Padel Tour uses a golden point at deuce. One single rally determines the game. The receiving team chooses which side to receive from.' },
+      { q: 'Can a player reach over the net to play the ball?', opts: ['Yes, always allowed', 'Never — automatic point loss', 'Only if the ball came back over on its own', 'Only for overhead smashes'], ans: 2, explain: 'A player may only reach over the net if the ball has already crossed into their side and spun or blown back. Touching the net or the opponent\'s half otherwise loses the point.' },
+      { q: 'What is the maximum length of a padel racket?', opts: ['38 cm', '42 cm', '45.5 cm', '50 cm'], ans: 2, explain: 'FIP regulations set the maximum racket length at 45.5 cm, maximum width 26 cm, and maximum thickness 38 mm. Strings are not permitted — the surface must be solid.' },
+      { q: 'Where must the server stand to begin a service?', opts: ['Anywhere behind the baseline', 'Behind the service line on the correct side', 'At the net', 'Anywhere in their half'], ans: 1, explain: 'The server must stand behind the service line and to the correct side (right for the first point, alternating thereafter). Both feet must be behind the line.' },
+      { q: 'What happens if the ball hits the wire mesh fence BEFORE bouncing on the ground?', opts: ['Point is lost', 'Let is called', 'Ball is still in play', 'Server gets a second serve'], ans: 2, explain: 'If the ball hits the wire mesh before bouncing on the floor, it is still in play. The rally continues — the ball must only be returned before a second ground bounce.' },
+      { q: 'How high is the padel net at the posts?', opts: ['88 cm', '92 cm', '1 metre', '76 cm'], ans: 0, explain: 'The net is 88 cm high at the posts and 92 cm at the centre. This gives the net a slight dip in the middle, similar to tennis.' },
+      { q: 'Which governing body publishes the official padel rules?', opts: ['WPT (World Padel Tour)', 'FIP (Federación Internacional de Pádel)', 'ITF (Int\'l Tennis Federation)', 'Premier Padel'], ans: 1, explain: 'The Federación Internacional de Pádel (FIP) is the global governing body responsible for publishing and updating the official padel rulebook.' },
+    ];
+
+    let gameQuestions = [];
+    let currentQ = 0;
+    let score = 0;
+    let timer = null;
+    let timeLeft = 15;
+    let answered = false;
+
+    function shuffleArray(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function startGame() {
+      gameQuestions = shuffleArray(ALL_QUESTIONS).slice(0, 5);
+      currentQ = 0;
+      score = 0;
+      document.getElementById('game-score').textContent = '0 pts';
+      document.getElementById('end-screen').classList.remove('show');
+      document.getElementById('game-state').style.display = 'block';
+      buildDots();
+      loadQuestion();
+    }
+
+    function buildDots() {
+      const dots = document.getElementById('progress-dots');
+      dots.innerHTML = '';
+      gameQuestions.forEach((_, i) => {
+        const d = document.createElement('div');
+        d.className = 'pdot' + (i === 0 ? ' active' : '');
+        d.setAttribute('aria-label', `Question ${i + 1}`);
+        dots.appendChild(d);
+      });
+    }
+
+    function updateDots(index) {
+      const dots = document.querySelectorAll('.pdot');
+      dots.forEach((d, i) => {
+        d.className = 'pdot' + (i < index ? ' done' : i === index ? ' active' : '');
+      });
+    }
+
+    function loadQuestion() {
+      clearInterval(timer);
+      answered = false;
+      timeLeft = 15;
+
+      const q = gameQuestions[currentQ];
+      document.getElementById('game-qnum').textContent = `Question ${currentQ + 1} of ${gameQuestions.length}`;
+      document.getElementById('game-question').textContent = q.q;
+      document.getElementById('game-explain').className = 'game-explain';
+      document.getElementById('game-explain').textContent = '';
+      document.getElementById('next-btn').style.display = 'none';
+
+      updateDots(currentQ);
+
+      // Build options
+      const grid = document.getElementById('options-grid');
+      grid.innerHTML = '';
+      q.opts.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.textContent = opt;
+        btn.setAttribute('aria-label', `Option ${i + 1}: ${opt}`);
+        btn.addEventListener('click', () => selectAnswer(i));
+        grid.appendChild(btn);
+      });
+
+      // Timer
+      updateTimer();
+      timer = setInterval(() => {
+        timeLeft--;
+        updateTimer();
+        if (timeLeft <= 0) { clearInterval(timer); if (!answered) autoFail(); }
+      }, 1000);
+    }
+
+    function updateTimer() {
+      const pct = (timeLeft / 15) * 100;
+      const fill = document.getElementById('timer-fill');
+      const badge = document.getElementById('game-timer');
+      const urgent = timeLeft <= 5;
+      fill.style.width = pct + '%';
+      fill.classList.toggle('urgent', urgent);
+      badge.textContent = timeLeft + 's';
+      badge.classList.toggle('urgent', urgent);
+      // Update aria
+      const bar = fill.parentElement;
+      bar.setAttribute('aria-valuenow', timeLeft);
+    }
+
+    function selectAnswer(idx) {
+      if (answered) return;
+      answered = true;
+      clearInterval(timer);
+
+      const q = gameQuestions[currentQ];
+      const btns = document.querySelectorAll('.opt-btn');
+      const timeBonus = Math.floor((timeLeft / 15) * 50);
+      const isCorrect = idx === q.ans;
+
+      btns.forEach((btn, i) => {
+        if (i === q.ans) btn.classList.add('correct');
+        else if (i === idx && !isCorrect) btn.classList.add('wrong');
+        else btn.classList.add('dim');
+        btn.disabled = true;
+      });
+
+      if (isCorrect) {
+        score += 100 + timeBonus;
+        document.getElementById('game-score').textContent = score + ' pts';
+      }
+
+      const explain = document.getElementById('game-explain');
+      explain.innerHTML = (isCorrect ? '✅ Correct! ' : '❌ Incorrect. ') + q.explain;
+      explain.className = 'game-explain show';
+      document.getElementById('next-btn').style.display = 'inline-flex';
+    }
+
+    function autoFail() {
+      answered = true;
+      const q = gameQuestions[currentQ];
+      const btns = document.querySelectorAll('.opt-btn');
+      btns.forEach((btn, i) => {
+        if (i === q.ans) btn.classList.add('correct');
+        else btn.classList.add('dim');
+        btn.disabled = true;
+      });
+      const explain = document.getElementById('game-explain');
+      explain.innerHTML = '⏱️ Time\'s up! ' + q.explain;
+      explain.className = 'game-explain show';
+      document.getElementById('next-btn').style.display = 'inline-flex';
+    }
+
+    window.nextQuestion = function() {
+      currentQ++;
+      if (currentQ >= gameQuestions.length) {
+        endGame();
+      } else {
+        loadQuestion();
+      }
+    };
+
+    function endGame() {
+      clearInterval(timer);
+      document.getElementById('game-state').style.display = 'none';
+      const endScreen = document.getElementById('end-screen');
+      endScreen.classList.add('show');
+
+      const correctCount = Math.round(score / 100); // approx since bonus varies
+      const maxScore = gameQuestions.length * 150;
+      const pct = score / maxScore;
+
+      let stars = '⭐';
+      let label = 'Keep practising — the rulebook awaits!';
+      if (pct >= 0.8)  { stars = '⭐⭐⭐'; label = 'Padel rule expert! Share your score.'; }
+      else if (pct >= 0.5) { stars = '⭐⭐'; label = 'Solid knowledge — getting there!'; }
+
+      document.getElementById('end-stars').textContent = stars;
+      document.getElementById('end-score').textContent = score + ' pts';
+      document.getElementById('end-score-badge').textContent = score + ' pts';
+      document.getElementById('end-label').textContent = label;
+    }
+
+    window.restartGame = startGame;
+
+    window.shareScore = function() {
+      const text = `I scored ${document.getElementById('end-score').textContent} on the PadelIQ rules quiz! 🎾 Can you beat me? https://padeliq.com #padel #PadelIQ`;
+      if (navigator.share) {
+        navigator.share({ title: 'PadelIQ Quiz Score', text }).catch(() => copyToClipboard(text));
+      } else {
+        copyToClipboard(text);
+      }
+    };
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text)
+        .then(() => showToast('📋 Score copied to clipboard!'))
+        .catch(() => showToast('Copy: ' + text.slice(0, 60) + '...'));
+    }
+
+    // Start game on load
+    startGame();
+
+    /* ─────────────────────────────────────────
+       LEAD FORM VALIDATION
+    ───────────────────────────────────────── */
+    document.getElementById('lead-form').addEventListener('submit', e => {
+      e.preventDefault();
+      let valid = true;
+
+      const firstName = document.getElementById('first-name');
+      const email = document.getElementById('lead-email');
+      const consent = document.getElementById('gdpr-consent');
+      const playerLevel = document.getElementById('player-level');
+
+      const errFirst = document.getElementById('err-first-name');
+      const errEmail = document.getElementById('err-email');
+      const errConsent = document.getElementById('err-consent');
+
+      // Validate first name
+      if (!firstName.value.trim()) {
+        firstName.classList.add('error'); errFirst.classList.add('show'); valid = false;
+      } else { firstName.classList.remove('error'); errFirst.classList.remove('show'); }
+
+      // Validate email
+      const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRe.test(email.value.trim())) {
+        email.classList.add('error'); errEmail.classList.add('show'); valid = false;
+      } else { email.classList.remove('error'); errEmail.classList.remove('show'); }
+
+      // Validate consent
+      if (!consent.checked) {
+        errConsent.classList.add('show'); valid = false;
+      } else { errConsent.classList.remove('show'); }
+
+      if (!valid) return;
+
+      // Simulate submit
+      document.getElementById('lead-form-wrap').style.display = 'none';
+      const success = document.getElementById('form-success');
+      success.classList.add('show');
+      showToast('📖 Handbook on its way to your inbox!');
+    });
+
+    /* Live validation on blur */
+    ['first-name', 'lead-email'].forEach(id => {
+      document.getElementById(id).addEventListener('blur', function() {
+        if (this.value.trim()) { this.classList.remove('error'); }
+      });
+    });
+
+  })();
+  </script>
+
 </body>
 </html>
-const questions = [
-    { text: "The ball bounces twice in the opponent's side. Is the point over?", answer: true, reason: "Correct! Two bounces always ends the point." },
-    { text: "The ball hits the net and then the fence on a serve.", answer: false, reason: "Let! But hitting the fence directly after the net on a serve is a fault." },
-    { text: "You hit the ball, it hits the opponent's glass, then bounces back over the net. Do you win the point?", answer: true, reason: "Yes! If the opponent doesn't touch it, it's your point." },
-    { text: "Your racket touches the net while you are smashing. Is that okay?", answer: false, reason: "Fault! Any contact with the net during play loses you the point." }
-];
-
-let currentIdx = 0;
-let score = 0;
-
-function checkAnswer(userChoice) {
-    const feedbackEl = document.getElementById('feedback');
-    const q = questions[currentIdx];
-
-    if (userChoice === q.answer) {
-        score++;
-        feedbackEl.textContent = "✅ " + q.reason;
-        feedbackEl.className = "p-4 rounded-lg mb-4 text-center font-bold bg-green-900/50 text-green-400";
-    } else {
-        feedbackEl.textContent = "❌ " + q.reason;
-        feedbackEl.className = "p-4 rounded-lg mb-4 text-center font-bold bg-red-900/50 text-red-400";
-    }
-
-    feedbackEl.classList.remove('hidden');
-    document.getElementById('score').textContent = `Score: ${score}`;
-
-    setTimeout(() => {
-        feedbackEl.classList.add('hidden');
-        currentIdx++;
-        if (currentIdx < questions.length) {
-            document.getElementById('question-text').textContent = `"${questions[currentIdx].text}"`;
-        } else {
-            showLeadCapture();
-        }
-    }, 2500);
-}
-
-function showLeadCapture() {
-    document.getElementById('game-container').classList.add('hidden');
-    document.getElementById('lead-capture').classList.remove('hidden');
-}
-
-function handleLead(e) {
-    e.preventDefault();
-    alert("Welcome to the team! Your rulebook is on the way.");
-    // Here you would typically use fetch() to send the email to your backend/CRM
-}
-
-function toggleVoice() {
-    const overlay = document.getElementById('voice-overlay');
-    overlay.classList.toggle('hidden');
-    
-    // Simple UI mock for the voice interaction
-    if (!overlay.classList.contains('hidden')) {
-        setTimeout(() => {
-            document.getElementById('voice-transcript').textContent = "Processing: 'Is it legal to play outside the court?'";
-        }, 2000);
-        setTimeout(() => {
-            document.getElementById('voice-transcript').textContent = "PadelRef: 'Yes, if the court is approved for out-of-court play!'";
-        }, 4000);
-    }
-}
